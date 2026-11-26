@@ -1,0 +1,43 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Campus Event Gallery - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-10 text-center max-w-2xl mx-auto">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold badge-amber mb-3">Photo Highlights</span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[#303247] mb-2 tracking-tight">Campus Memories &amp; Gallery</h1>
+        <p class="text-[#85899B] text-base">Highlights and moments captured across all club events and workshops.</p>
+    </div>
+
+    {% if images %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for img in images %}
+        <div class="group glass-card rounded-2xl overflow-hidden flex flex-col">
+            <div class="relative h-56 bg-[#F3F1FC] overflow-hidden">
+                <img src="{{ url_for('static', filename=img.image_url) }}" alt="{{ img.caption or 'Event Gallery' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/90 text-[#4E3D8C] border border-[#EAE8F4] shadow-xs">
+                    {{ img.event.title }}
+                </span>
+            </div>
+            <div class="p-4 bg-white">
+                <p class="text-[#303247] text-xs font-semibold line-clamp-2">{{ img.caption or 'Campus event moment' }}</p>
+                <div class="mt-2 flex items-center justify-between text-[11px] text-[#85899B]">
+                    <span>{{ img.event.club.name }}</span>
+                    <span>{{ img.uploaded_at|datetimeformat('%b %d, %Y') }}</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-panel p-14 text-center rounded-2xl">
+        <div class="w-14 h-14 rounded-2xl bg-[#FFF1EA] text-[#9A4E27] mx-auto flex items-center justify-center mb-4">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </div>
+        <p class="text-[#303247] font-bold text-lg mb-1">No gallery photos uploaded yet</p>
+        <p class="text-[#85899B] text-sm">Club coordinators can upload highlights from their event control center.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

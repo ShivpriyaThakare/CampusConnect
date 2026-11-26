@@ -1,0 +1,144 @@
+{% extends "layouts/admin_layout.html" %}
+
+{% block title %}{{ club.name }} Details - Admin - CampusConnect{% endblock %}
+
+{% block admin_content %}
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div>
+        <a href="{{ url_for('admin.clubs') }}" class="text-xs font-semibold text-[#5B47A3] hover:underline">&larr; Back to Club Management</a>
+        <h1 class="text-3xl font-extrabold text-[#303247] tracking-tight mt-1">{{ club.name }}</h1>
+    </div>
+    <div class="flex gap-2">
+        <span class="px-3 py-1.5 rounded-full text-xs font-semibold badge-blue">{{ club.category }}</span>
+        {% if club.is_archived %}
+            <span class="px-3 py-1.5 rounded-full text-xs font-semibold badge-neutral">Archived</span>
+        {% else %}
+            <span class="px-3 py-1.5 rounded-full text-xs font-semibold badge-emerald">{{ club.status|title }}</span>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Club Overview & Coordinator Card -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="lg:col-span-2 glass-panel p-6 rounded-3xl">
+        <div class="flex items-start gap-5">
+            <div class="w-20 h-20 rounded-2xl bg-[#EFEBF9] border border-[#DFD7F4] flex items-center justify-center text-2xl font-extrabold text-[#5B47A3] overflow-hidden flex-shrink-0">
+                {% if club.logo_url %}
+                    <img src="{{ url_for('static', filename=club.logo_url) }}" alt="{{ club.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    {{ club.name[0] }}
+                {% endif %}
+            </div>
+            <div class="space-y-2">
+                <p class="text-sm text-[#5E6278] leading-relaxed">{{ club.description or 'No club description provided.' }}</p>
+                <div class="flex flex-wrap gap-4 text-xs text-[#85899B] pt-2">
+                    <span>Contact: <strong class="text-[#303247]">{{ club.contact_info or 'Not provided' }}</strong></span>
+                    <span>Budget: <strong class="text-[#1E6A4C]">{{ club.allocated_budget|currency }}</strong></span>
+                    <span>Members: <strong class="text-[#303247]">{{ memberships|length }}</strong></span>
+                    <span>Events: <strong class="text-[#303247]">{{ events|length }}</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coordinator Quick Assignment -->
+    <div class="glass-panel p-6 rounded-3xl">
+        <h3 class="text-sm font-bold text-[#303247] uppercase tracking-wider mb-3">Assigned Coordinator</h3>
+        {% if club.coordinator %}
+            <div class="p-3.5 rounded-2xl bg-[#FAF9FE] border border-[#EAE8F4] mb-4 flex items-center justify-between gap-2">
+                <div>
+                    <span class="block text-sm font-bold text-[#303247]">{{ club.coordinator.name }}</span>
+                    <span class="block text-xs text-[#85899B]">{{ club.coordinator.email }}</span>
+                </div>
+                <form method="POST" action="{{ url_for('admin.club_detail', club_id=club.id) }}">
+                    <input type="hidden" name="action" value="remove_coordinator">
+                    <button type="submit" class="px-2.5 py-1 rounded-lg badge-rose text-[11px] font-semibold">Remove</button>
+                </form>
+            </div>
+        {% else %}
+            <p class="text-xs text-[#85899B] italic mb-4">No coordinator assigned yet.</p>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('admin.club_detail', club_id=club.id) }}" class="space-y-2.5">
+            <input type="hidden" name="action" value="assign_coordinator">
+            <select name="coordinator_id" required class="w-full h-10 px-3 saas-input text-xs">
+                <option value="">-- Select New Coordinator --</option>
+                {% for u in all_active_users %}
+                    <option value="{{ u.id }}" {% if club.coordinator_id == u.id %}selected{% endif %}>{{ u.name }} ({{ u.role }})</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="w-full h-10 rounded-xl btn-pastel-primary text-xs">Assign / Replace Coordinator</button>
+        </form>
+    </div>
+</div>
+
+<!-- Club Members & Club Events -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-7">
+    <!-- Members Section -->
+    <div class="glass-panel p-6 rounded-3xl">
+        <h3 class="text-lg font-bold text-[#303247] mb-4">Club Members ({{ memberships|length }})</h3>
+
+        <form method="POST" action="{{ url_for('admin.club_detail', club_id=club.id) }}" class="flex flex-col sm:flex-row gap-2.5 mb-5">
+            <input type="hidden" name="action" value="add_member">
+            <select name="user_id" required class="h-10 px-3 saas-input text-xs flex-grow">
+                <option value="">-- Select User to Add --</option>
+                {% for u in available_users %}
+                    <option value="{{ u.id }}">{{ u.name }} ({{ u.email }})</option>
+                {% endfor %}
+            </select>
+            <select name="member_role" class="h-10 px-3 saas-input text-xs">
+                {% for mr in member_roles %}
+                    <option value="{{ mr }}">{{ mr }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="h-10 px-4 rounded-xl btn-pastel-primary text-xs whitespace-nowrap">Add Member</button>
+        </form>
+
+        {% if memberships %}
+        <div class="space-y-2.5">
+            {% for m in memberships %}
+            <div class="p-3.5 rounded-2xl bg-[#FAF9FE] border border-[#EAE8F4] flex items-center justify-between gap-3 text-xs">
+                <div>
+                    <span class="font-bold text-[#303247] block">{{ m.user.name }}</span>
+                    <span class="text-[#85899B]">{{ m.user.email }} • <span class="font-semibold text-[#5B47A3]">{{ m.member_role }}</span></span>
+                </div>
+                <form method="POST" action="{{ url_for('admin.club_detail', club_id=club.id) }}">
+                    <input type="hidden" name="action" value="remove_member">
+                    <input type="hidden" name="membership_id" value="{{ m.id }}">
+                    <button type="submit" class="px-2.5 py-1 rounded-lg badge-rose hover:bg-[#FBCFD9] font-semibold">Remove</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-xs text-[#85899B] text-center py-6">No members added to this club yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Events Section -->
+    <div class="glass-panel p-6 rounded-3xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-[#303247]">Club Events ({{ events|length }})</h3>
+            <a href="{{ url_for('admin.events', club_id=club.id) }}" class="text-xs text-[#5B47A3] font-semibold hover:underline">Manage All &rarr;</a>
+        </div>
+
+        {% if events %}
+        <div class="space-y-2.5">
+            {% for ev in events %}
+            <div class="p-3.5 rounded-2xl bg-[#FAF9FE] border border-[#EAE8F4] flex items-center justify-between gap-3 text-xs">
+                <div>
+                    <span class="font-bold text-[#303247] block">{{ ev.title }}</span>
+                    <span class="text-[#85899B]">{{ ev.event_date|datetimeformat('%b %d, %Y') }} • {{ ev.registered_count }}/{{ ev.capacity }} seats</span>
+                </div>
+                <span class="px-2.5 py-1 rounded-full font-semibold {% if ev.status == 'published' %}badge-emerald{% elif ev.status == 'draft' %}badge-amber{% else %}badge-rose{% endif %}">
+                    {{ ev.status }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-xs text-[#85899B] text-center py-6">No events organized by this club yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

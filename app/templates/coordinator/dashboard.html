@@ -1,0 +1,110 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Coordinator Dashboard - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold badge-emerald">Coordinator Portal</span>
+                {% if club %}
+                    <span class="text-xs font-medium text-[#85899B]">{{ club.name }}</span>
+                {% endif %}
+            </div>
+            <h1 class="text-3xl font-extrabold text-[#303247] tracking-tight">Event &amp; Club Dashboard</h1>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <a href="{{ url_for('coordinator.create_event') }}" class="px-5 py-2.5 rounded-xl btn-pastel-primary text-xs inline-flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Create Event
+            </a>
+            <a href="{{ url_for('coordinator.members') }}" class="px-4 py-2.5 rounded-xl badge-blue hover:bg-[#B9D8F2] text-xs font-semibold transition-colors">Club Members</a>
+            <a href="{{ url_for('coordinator.club_profile') }}" class="px-4 py-2.5 rounded-xl btn-pastel-secondary text-xs">Club Profile</a>
+        </div>
+    </div>
+
+    <!-- Coordinator Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div class="glass-card p-6 rounded-2xl">
+            <span class="text-xs font-semibold text-[#85899B] uppercase tracking-wider block mb-2">Total Events</span>
+            <div class="text-3xl font-extrabold text-[#303247] mb-1">{{ total_events }}</div>
+            <span class="text-xs font-medium text-[#5B47A3]">{{ published_events }} published</span>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl">
+            <span class="text-xs font-semibold text-[#85899B] uppercase tracking-wider block mb-2">Total Registrations</span>
+            <div class="text-3xl font-extrabold text-[#303247] mb-1">{{ total_registrations }}</div>
+            <span class="text-xs font-medium text-[#1E6A4C]">Student Signups</span>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl">
+            <span class="text-xs font-semibold text-[#85899B] uppercase tracking-wider block mb-2">Allocated Budget</span>
+            <div class="text-3xl font-extrabold text-[#1E6A4C] mb-1">{{ allocated_budget|currency }}</div>
+            <span class="text-xs text-[#85899B]">Club Annual Limit</span>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl">
+            <span class="text-xs font-semibold text-[#85899B] uppercase tracking-wider block mb-2">Total Logged Spend</span>
+            <div class="text-3xl font-extrabold text-[#9A4E27] mb-1">{{ total_spent|currency }}</div>
+            <span class="text-xs text-[#85899B]">Across all events</span>
+        </div>
+    </div>
+
+    <!-- Managed Events Table -->
+    <div class="glass-panel rounded-2xl overflow-hidden">
+        <div class="p-6 border-b border-[#EAE8F4] flex items-center justify-between">
+            <h3 class="text-lg font-bold text-[#303247]">Managed Club Events</h3>
+            <span class="text-xs font-medium text-[#85899B]">{{ events|length }} total events</span>
+        </div>
+
+        {% if events %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#FAF9FE] text-xs font-semibold text-[#85899B] uppercase tracking-wider border-b border-[#EAE8F4]">
+                        <th class="p-4">Event Title</th>
+                        <th class="p-4">Category</th>
+                        <th class="p-4">Date &amp; Time</th>
+                        <th class="p-4">Registrations</th>
+                        <th class="p-4">Status</th>
+                        <th class="p-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#F0EEF8] text-sm">
+                    {% for ev in events %}
+                    <tr class="hover:bg-[#FAF9FE] transition-colors">
+                        <td class="p-4 font-bold text-[#303247]">
+                            <a href="{{ url_for('coordinator.event_details', event_id=ev.id) }}" class="hover:text-[#5B47A3] transition-colors">{{ ev.title }}</a>
+                        </td>
+                        <td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-indigo">{{ ev.category }}</span></td>
+                        <td class="p-4 text-xs text-[#5E6278]">{{ ev.event_date|datetimeformat('%b %d, %Y • %I:%M %p') }}</td>
+                        <td class="p-4 text-xs text-[#303247] font-semibold">{{ ev.registered_count }} / {{ ev.capacity }}</td>
+                        <td class="p-4">
+                            {% if ev.status == 'published' %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-emerald">Published</span>
+                            {% elif ev.status == 'draft' %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-amber">Draft</span>
+                            {% elif ev.status == 'completed' %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-indigo">Completed</span>
+                            {% else %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-rose">Cancelled</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-4 text-right space-x-2 whitespace-nowrap">
+                            <a href="{{ url_for('coordinator.event_details', event_id=ev.id) }}" class="px-3 py-1.5 rounded-lg btn-pastel-primary text-xs">Manage</a>
+                            <a href="{{ url_for('coordinator.edit_event', event_id=ev.id) }}" class="px-3 py-1.5 rounded-lg btn-pastel-reset text-xs">Edit</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-10 text-center text-[#85899B] text-sm">
+            No events created yet. Click "Create Event" to get started!
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

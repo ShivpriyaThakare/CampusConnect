@@ -1,0 +1,49 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Campus Clubs - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-10 text-center max-w-2xl mx-auto">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold badge-emerald mb-3">Student Organizations</span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[#303247] mb-2 tracking-tight">Campus Student Organizations</h1>
+        <p class="text-[#85899B] text-base">Explore approved student-led clubs, tech chapters, and societies driving campus culture.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+        {% for club in clubs %}
+        <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-14 h-14 rounded-2xl bg-[#EFEBF9] border border-[#DFD7F4] flex items-center justify-center text-[#5B47A3] overflow-hidden flex-shrink-0">
+                        {% if club.logo_url %}
+                            <img src="{{ url_for('static', filename=club.logo_url) }}" alt="{{ club.name }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <span class="text-xl font-extrabold">{{ club.name[0] }}</span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <h3 class="text-lg font-bold text-[#303247]">{{ club.name }}</h3>
+                        </div>
+                        <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold badge-blue mb-1">{{ club.category }}</span>
+                        <span class="block text-xs text-[#5B47A3] font-medium">Coordinator: {{ club.coordinator.name if club.coordinator else 'Unassigned' }}</span>
+                    </div>
+                </div>
+
+                <p class="text-[#5E6278] text-sm leading-relaxed line-clamp-3 mb-6">{{ club.description or 'Active student club promoting campus engagement.' }}</p>
+            </div>
+
+            <div class="pt-4 border-t border-[#F0EEF8] flex items-center justify-between">
+                <span class="text-xs text-[#85899B] font-medium">
+                    <strong class="text-[#303247]">{{ club.member_count }}</strong> Members • <strong class="text-[#303247]">{{ club.events|length }}</strong> Events
+                </span>
+                <a href="{{ url_for('main.club_detail', club_id=club.id) }}" class="px-4 py-2 rounded-xl btn-pastel-primary text-xs">
+                    View Club Details
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+{% set ep = request.endpoint or '' %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col lg:flex-row gap-7 items-start">
+
+        <!-- Admin Sidebar Navigation -->
+        <aside class="w-full lg:w-64 flex-shrink-0 glass-panel rounded-2xl p-4 lg:sticky lg:top-24">
+            <div class="px-3 py-2 mb-3 border-b border-[#EAE8F4]">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider badge-rose inline-block mb-1.5">System Admin</span>
+                <h2 class="text-sm font-extrabold text-[#303247]">Management Console</h2>
+            </div>
+
+            <nav class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-1 gap-1 text-xs font-semibold">
+                <a href="{{ url_for('admin.dashboard') }}"
+                   class="px-3 py-2.5 rounded-xl flex items-center gap-2.5 transition-all {% if ep == 'admin.dashboard' %}bg-[#EFEBF9] text-[#4E3D8C]{% else %}text-[#5E6278] hover:bg-[#F3F1FC] hover:text-[#303247]{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span>Overview</span>
+                </a>
+
+                <a href="{{ url_for('admin.clubs') }}"
+                   class="px-3 py-2.5 rounded-xl flex items-center gap-2.5 transition-all {% if ep in ['admin.clubs', 'admin.club_detail'] %}bg-[#EFEBF9] text-[#4E3D8C]{% else %}text-[#5E6278] hover:bg-[#F3F1FC] hover:text-[#303247]{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h4m-4 0V11m0 0l-3 3m3-3l3 3"></path></svg>
+                    <span>Clubs</span>
+                </a>
+
+                <a href="{{ url_for('admin.users') }}"
+                   class="px-3 py-2.5 rounded-xl flex items-center gap-2.5 transition-all {% if ep == 'admin.users' %}bg-[#EFEBF9] text-[#4E3D8C]{% else %}text-[#5E6278] hover:bg-[#F3F1FC] hover:text-[#303247]{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <span>Members &amp; Roles</span>
+                </a>
+
+                <a href="{{ url_for('admin.coordinators') }}"
+                   class="px-3 py-2.5 rounded-xl flex items-center gap-2.5 transition-all {% if ep == 'admin.coordinators' %}bg-[#EFEBF9] text-[#4E3D8C]{% else %}text-[#5E6278] hover:bg-[#F3F1FC] hover:text-[#303247]{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <span>Coordinators</span>
+                </a>
+
+                <a href="{{ url_for('admin.events') }}"
+                   class="px-3 py-2.5 rounded-xl flex items-center gap-2.5 transition-all {% if ep == 'admin.events' %}bg-[#EFEBF9] text-[#4E3D8C]{% else %}text-[#5E6278] hover:bg-[#F3F1FC] hover:text-[#303247]{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>Events</span>
+                </a>
+
+                <a href="{{ url_for('admin.registrations') }}"
+                   class="px-3 py-2.5 rounded-xl flex items-center gap-2.5 transition-all {% if ep == 'admin.registrations' %}bg-[#EFEBF9] text-[#4E3D8C]{% else %}text-[#5E6278] hover:bg-[#F3F1FC] hover:text-[#303247]{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    <span>Registrations</span>
+                </a>
+
+                <a href="{{ url_for('admin.gallery') }}"
+                   class="px-3 py-2.5 rounded-xl flex items-center gap-2.5 transition-all {% if ep == 'admin.gallery' %}bg-[#EFEBF9] text-[#4E3D8C]{% else %}text-[#5E6278] hover:bg-[#F3F1FC] hover:text-[#303247]{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>Gallery</span>
+                </a>
+
+                <a href="{{ url_for('admin.budget_audits') }}"
+                   class="px-3 py-2.5 rounded-xl flex items-center gap-2.5 transition-all {% if ep == 'admin.budget_audits' %}bg-[#EFEBF9] text-[#4E3D8C]{% else %}text-[#5E6278] hover:bg-[#F3F1FC] hover:text-[#303247]{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Budget Audits</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Admin Workspace -->
+        <div class="flex-1 min-w-0 w-full">
+            {% block admin_content %}{% endblock %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

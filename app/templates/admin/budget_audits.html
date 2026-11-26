@@ -1,0 +1,135 @@
+{% extends "layouts/admin_layout.html" %}
+
+{% block title %}Cross-Club Expense Audits - Admin - CampusConnect{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-extrabold text-[#303247] tracking-tight">Cross-Club Expense Audits</h1>
+    <p class="text-[#85899B] text-sm mt-1">Review event expense claims, verify uploaded receipts, and monitor budget utilization across all clubs.</p>
+</div>
+
+<!-- Club Budget Breakdown Cards -->
+<div class="mb-8">
+    <h3 class="text-lg font-bold text-[#303247] mb-4">Club Financial Audit Summaries</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for item in club_budgets %}
+        <div class="glass-card p-6 rounded-2xl">
+            <div class="flex items-center justify-between mb-3">
+                <h4 class="text-base font-bold text-[#303247]">{{ item.club.name }}</h4>
+                <span class="text-xs text-[#1E6A4C] font-semibold">Budget: {{ item.allocated|currency }}</span>
+            </div>
+
+            <div class="space-y-2 text-xs text-[#5E6278] mb-4">
+                <div class="flex justify-between">
+                    <span>Approved Spend</span>
+                    <strong class="text-[#303247]">{{ item.approved_spent|currency }}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span>Remaining Balance</span>
+                    <strong class="{% if item.remaining >= 0 %}text-[#1E6A4C]{% else %}text-[#9E334D]{% endif %}">{{ item.remaining|currency }}</strong>
+                </div>
+            </div>
+
+            <div class="w-full bg-[#F1EFF9] rounded-full h-2.5 overflow-hidden">
+                {% set usage_pct = (item.approved_spent / item.allocated * 100)|int if item.allocated > 0 else 0 %}
+                <div class="h-2.5 rounded-full {% if usage_pct > 90 %}bg-[#E88A9F]{% elif usage_pct > 70 %}bg-[#F4B998]{% else %}bg-[#8CD3B2]{% endif %}"
+                     style="width: {{ usage_pct if usage_pct <= 100 else 100 }}%"></div>
+            </div>
+            <span class="text-[11px] text-[#85899B] mt-1.5 block text-right">{{ usage_pct }}% utilized</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Expense Claims Filter Bar -->
+<div class="glass-panel p-5 rounded-2xl mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+    <h3 class="text-lg font-bold text-[#303247]">Expense Audit Logs</h3>
+
+    <form method="GET" action="{{ url_for('admin.budget_audits') }}" class="flex flex-wrap gap-3 items-center">
+        <select name="club_id" class="h-10 px-4 saas-input text-xs">
+            <option value="">All Clubs</option>
+            {% for c in clubs %}
+                <option value="{{ c.id }}" {% if club_filter == c.id %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="status" class="h-10 px-4 saas-input text-xs">
+            <option value="">All Statuses</option>
+            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
+            <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+        </select>
+
+        <button type="submit" class="h-10 px-4 rounded-xl btn-pastel-primary text-xs">Filter</button>
+        <a href="{{ url_for('admin.budget_audits') }}" class="h-10 px-4 rounded-xl btn-pastel-reset text-xs inline-flex items-center">Reset</a>
+    </form>
+</div>
+
+<!-- Expenses Table -->
+<div class="glass-panel rounded-3xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-[#FAF9FE] text-xs font-semibold text-[#85899B] uppercase tracking-wider border-b border-[#EAE8F4]">
+                    <th class="p-4">Expense Title</th>
+                    <th class="p-4">Club &amp; Event</th>
+                    <th class="p-4">Category</th>
+                    <th class="p-4">Amount</th>
+                    <th class="p-4">Receipt</th>
+                    <th class="p-4">Audit Status</th>
+                    <th class="p-4 text-right">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-[#F0EEF8] text-sm">
+                {% if expenses %}
+                    {% for exp in expenses %}
+                    <tr class="hover:bg-[#FAF9FE]">
+                        <td class="p-4 font-bold text-[#303247]">{{ exp.title }}</td>
+                        <td class="p-4">
+                            <span class="block text-[#303247] font-semibold">{{ exp.event.club.name }}</span>
+                            <span class="block text-xs text-[#85899B]">{{ exp.event.title }}</span>
+                        </td>
+                        <td class="p-4 text-xs">
+                            <span class="px-2.5 py-1 rounded-full badge-indigo font-semibold">{{ exp.category }}</span>
+                        </td>
+                        <td class="p-4 font-extrabold text-[#1E6A4C]">{{ exp.amount|currency }}</td>
+                        <td class="p-4">
+                            {% if exp.receipt_file %}
+                                <a href="{{ url_for('static', filename=exp.receipt_file) }}" target="_blank" class="px-2.5 py-1 rounded-lg badge-blue text-xs font-semibold hover:underline inline-flex items-center gap-1">
+                                    View File
+                                </a>
+                            {% else %}
+                                <span class="text-xs text-[#85899B] italic">No receipt</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-4">
+                            {% if exp.status == 'approved' %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-emerald">Approved</span>
+                            {% elif exp.status == 'pending' %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-amber">Pending Audit</span>
+                            {% else %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-rose">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
+                            <form method="POST" action="{{ url_for('admin.budget_audits') }}" class="inline-block">
+                                <input type="hidden" name="expense_id" value="{{ exp.id }}">
+                                <button type="submit" name="status" value="approved" class="px-3 py-1 rounded-lg badge-emerald hover:bg-[#B9E4D0] text-xs font-semibold">Approve</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.budget_audits') }}" class="inline-block">
+                                <input type="hidden" name="expense_id" value="{{ exp.id }}">
+                                <button type="submit" name="status" value="rejected" class="px-3 py-1 rounded-lg badge-rose hover:bg-[#FBCFD9] text-xs font-semibold">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-[#85899B] text-sm">No expenses matching your criteria.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

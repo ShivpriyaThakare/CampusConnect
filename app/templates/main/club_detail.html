@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ club.name }} - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="glass-panel p-8 rounded-3xl mb-10">
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+            <div class="w-24 h-24 rounded-3xl bg-[#EFEBF9] border border-[#DFD7F4] flex items-center justify-center text-[#5B47A3] overflow-hidden flex-shrink-0 text-3xl font-extrabold">
+                {% if club.logo_url %}
+                    <img src="{{ url_for('static', filename=club.logo_url) }}" alt="{{ club.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    {{ club.name[0] }}
+                {% endif %}
+            </div>
+            <div class="text-center sm:text-left flex-grow">
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 mb-2">
+                    <h1 class="text-3xl font-extrabold text-[#303247]">{{ club.name }}</h1>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold badge-blue">{{ club.category }}</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold badge-emerald">Approved Club</span>
+                </div>
+                <p class="text-[#5E6278] text-sm leading-relaxed max-w-2xl mb-4">{{ club.description or 'No club description provided.' }}</p>
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-5 text-xs text-[#85899B]">
+                    <span>Coordinator: <strong class="text-[#303247]">{{ club.coordinator.name if club.coordinator else 'Unassigned' }}</strong></span>
+                    <span>Members: <strong class="text-[#303247]">{{ club.member_count }}</strong></span>
+                    <span>Published Events: <strong class="text-[#5B47A3]">{{ events|length }}</strong></span>
+                    {% if club.contact_info %}
+                        <span>Contact: <strong class="text-[#303247]">{{ club.contact_info }}</strong></span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Club Events -->
+    <h2 class="text-2xl font-bold text-[#303247] mb-6">Upcoming Club Events</h2>
+
+    {% if events %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+        {% for event in events %}
+            {% include "partials/_event_card.html" %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-panel p-10 text-center rounded-2xl">
+        <p class="text-[#85899B] text-sm">No published events for this club at the moment.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

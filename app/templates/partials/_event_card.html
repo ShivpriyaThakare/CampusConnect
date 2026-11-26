@@ -1,0 +1,140 @@
+{% set cat = event.category or 'General' %}
+{% if cat == 'Hackathon' %}
+    {% set badge_cls = 'badge-indigo' %}
+    {% set cover_bg = 'from-[#EFEBF9] via-[#E5DDF7] to-[#EAE7FB]' %}
+    {% set shape_a = '#B8A8E8' %}
+    {% set shape_b = '#B9D8F2' %}
+    {% set bar_color = '#B8A8E8' %}
+{% elif cat == 'Cultural' %}
+    {% set badge_cls = 'badge-amber' %}
+    {% set cover_bg = 'from-[#FFF1EA] via-[#FFE5D7] to-[#FFF6EF]' %}
+    {% set shape_a = '#FFD6C2' %}
+    {% set shape_b = '#FBCFD9' %}
+    {% set bar_color = '#F5B899' %}
+{% elif cat == 'Technical' %}
+    {% set badge_cls = 'badge-blue' %}
+    {% set cover_bg = 'from-[#EAF4FC] via-[#DCECFB] to-[#F0F7FD]' %}
+    {% set shape_a = '#B9D8F2' %}
+    {% set shape_b = '#B8A8E8' %}
+    {% set bar_color = '#9AC7EE' %}
+{% elif cat == 'Sports' %}
+    {% set badge_cls = 'badge-emerald' %}
+    {% set cover_bg = 'from-[#EAF8F1] via-[#D9F2E5] to-[#F1FBF6]' %}
+    {% set shape_a = '#B9E4D0' %}
+    {% set shape_b = '#B9D8F2' %}
+    {% set bar_color = '#93D6B8' %}
+{% elif cat == 'Workshop' %}
+    {% set badge_cls = 'badge-blue' %}
+    {% set cover_bg = 'from-[#EEF4FC] via-[#E4EEFA] to-[#F5F2FC]' %}
+    {% set shape_a = '#B9D8F2' %}
+    {% set shape_b = '#B9E4D0' %}
+    {% set bar_color = '#A8C8EE' %}
+{% else %}
+    {% set badge_cls = 'badge-indigo' %}
+    {% set cover_bg = 'from-[#F3F0FA] via-[#EAE5F7] to-[#FAF9F6]' %}
+    {% set shape_a = '#B8A8E8' %}
+    {% set shape_b = '#FFD6C2' %}
+    {% set bar_color = '#B8A8E8' %}
+{% endif %}
+
+<article class="group glass-card rounded-[18px] overflow-hidden flex flex-col h-full">
+    <!-- Cover Banner / Pastel Illustration -->
+    <div class="relative h-44 bg-gradient-to-br {{ cover_bg }} overflow-hidden">
+        {% if event.banner_image %}
+            <img src="{{ url_for('static', filename=event.banner_image) }}" alt="{{ event.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        {% else %}
+            <!-- Clean SaaS Pastel Illustration -->
+            <svg class="w-full h-full" viewBox="0 0 400 180" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+                <circle cx="335" cy="36" r="64" fill="{{ shape_a }}" fill-opacity="0.45"/>
+                <circle cx="62" cy="148" r="56" fill="{{ shape_b }}" fill-opacity="0.5"/>
+                <rect x="265" y="96" width="110" height="72" rx="18" fill="#FFFFFF" fill-opacity="0.55"/>
+                <rect x="282" y="114" width="54" height="8" rx="4" fill="{{ shape_a }}" fill-opacity="0.8"/>
+                <rect x="282" y="130" width="76" height="6" rx="3" fill="#303247" fill-opacity="0.12"/>
+                <rect x="282" y="143" width="44" height="6" rx="3" fill="#303247" fill-opacity="0.1"/>
+                <!-- Central Category Emblem -->
+                <rect x="166" y="54" width="68" height="68" rx="20" fill="#FFFFFF" fill-opacity="0.88"/>
+                {% if cat == 'Hackathon' %}
+                    <path d="M189 82L181 88L189 94M211 82L219 88L211 94M203 78L197 98" stroke="#5B47A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                {% elif cat == 'Cultural' %}
+                    <path d="M196 98V80L212 77V95M196 98C196 100.2 194.2 102 192 102C189.8 102 188 100.2 188 98C188 95.8 189.8 94 192 94C194.2 94 196 95.8 196 98ZM212 95C212 97.2 210.2 99 208 99C205.8 99 204 97.2 204 95C204 92.8 205.8 91 208 91C210.2 91 212 92.8 212 95Z" stroke="#9A4E27" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                {% elif cat == 'Sports' %}
+                    <path d="M192 78H208V86C208 90.4 204.4 94 200 94C195.6 94 192 90.4 192 86V78ZM192 81H187C187 85 189 87 192 87M208 81H213C213 85 211 87 208 87M200 94V100M194 100H206" stroke="#1E6A4C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                {% elif cat in ['Technical', 'Workshop'] %}
+                    <path d="M188 98L195 91M195 91L207 79L211 83L199 95L195 91ZM190 79L193 82M208 97L211 100" stroke="#2B5E88" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                {% else %}
+                    <path d="M200 77L204 85L213 86.2L206.5 92.5L208 101L200 97L192 101L193.5 92.5L187 86.2L196 85L200 77Z" stroke="#5B47A3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                {% endif %}
+            </svg>
+        {% endif %}
+
+        <!-- Top Badges -->
+        <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-2">
+            <span class="px-3 py-1 rounded-full text-[11px] font-semibold {{ badge_cls }} shadow-xs backdrop-blur-xs">
+                {{ cat }}
+            </span>
+            <span class="px-3 py-1 rounded-full text-[11px] font-medium bg-white/90 text-[#303247] border border-[#EAE8F4] shadow-xs truncate max-w-[165px]">
+                {{ event.club.name }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Card Body -->
+    <div class="p-6 flex-grow flex flex-col justify-between">
+        <div>
+            <h3 class="text-lg font-bold text-[#303247] mb-2 leading-snug line-clamp-1">
+                <a href="{{ url_for('main.event_detail', event_id=event.id) }}" class="hover:text-[#5B47A3] transition-colors">
+                    {{ event.title }}
+                </a>
+            </h3>
+            <p class="text-[#85899B] text-sm leading-relaxed line-clamp-2 mb-5">
+                {{ event.description or 'Join fellow students for this upcoming campus session and collaborative activity.' }}
+            </p>
+        </div>
+
+        <!-- Structured Metadata -->
+        <div class="space-y-2.5 border-t border-[#F0EEF8] pt-4 text-xs text-[#5E6278]">
+            <div class="flex items-center justify-between gap-3">
+                <span class="inline-flex items-center gap-1.5 text-[#85899B]">
+                    <svg class="w-4 h-4 text-[#7D68C8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Date &amp; Time
+                </span>
+                <span class="font-semibold text-[#303247] text-right">{{ event.event_date|datetimeformat('%b %d, %Y • %I:%M %p') }}</span>
+            </div>
+
+            <div class="flex items-center justify-between gap-3">
+                <span class="inline-flex items-center gap-1.5 text-[#85899B]">
+                    <svg class="w-4 h-4 text-[#4B9B7B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Venue
+                </span>
+                <span class="font-medium text-[#303247] truncate max-w-[180px] text-right">{{ event.venue }}</span>
+            </div>
+
+            <div class="flex items-center justify-between gap-3">
+                <span class="inline-flex items-center gap-1.5 text-[#85899B]">
+                    <svg class="w-4 h-4 text-[#D67D54]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Deadline
+                </span>
+                <span class="font-medium text-[#9A4E27] text-right">{{ event.reg_deadline|datetimeformat('%b %d, %Y') }}</span>
+            </div>
+        </div>
+
+        <!-- Seat Progress & CTA -->
+        <div class="mt-5 pt-4 border-t border-[#F0EEF8] flex items-center justify-between gap-4">
+            <div class="flex-grow max-w-[155px]">
+                {% set pct = (event.registered_count / event.capacity * 100)|int if event.capacity > 0 else 0 %}
+                <div class="flex items-center justify-between text-[11px] mb-1.5">
+                    <span class="text-[#85899B] font-medium">Seats</span>
+                    <span class="font-semibold text-[#303247]">{{ event.registered_count }} / {{ event.capacity }}</span>
+                </div>
+                <div class="w-full bg-[#F1EFF9] rounded-full h-2 overflow-hidden">
+                    <div class="h-2 rounded-full transition-all duration-300" style="width: {{ pct if pct <= 100 else 100 }}%; background-color: {{ bar_color }};"></div>
+                </div>
+            </div>
+
+            <a href="{{ url_for('main.event_detail', event_id=event.id) }}"
+               class="px-4 py-2.5 rounded-xl btn-pastel-primary text-xs whitespace-nowrap">
+                View Details
+            </a>
+        </div>
+    </div>
+</article>

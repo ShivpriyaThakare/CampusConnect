@@ -1,0 +1,73 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Events Directory - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Heading -->
+    <div class="mb-10">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold badge-indigo mb-3">
+            Explore Activities
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[#303247] tracking-tight">Campus Events Directory</h1>
+        <p class="text-[#85899B] text-base mt-2 max-w-2xl">
+            Discover, filter, and register for upcoming hackathons, workshops, cultural nights, and student club activities.
+        </p>
+    </div>
+
+    <!-- Search & Filter Section -->
+    <form method="GET" action="{{ url_for('main.events') }}"
+          class="bg-white p-4 sm:p-5 rounded-2xl border border-[#EAE8F4] shadow-sm mb-10 flex flex-col lg:flex-row gap-3.5 items-stretch lg:items-center justify-between">
+        <div class="relative flex-grow lg:max-w-sm">
+            <span class="absolute inset-y-0 left-3.5 flex items-center text-[#85899B] pointer-events-none">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </span>
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Search title, venue, keywords..."
+                   class="w-full h-11 pl-10 pr-4 saas-input text-sm">
+        </div>
+
+        <div class="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap gap-3 items-stretch sm:items-center">
+            <select name="category" class="h-11 px-4 saas-input text-sm min-w-[165px]">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat }}" {% if category_filter == cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="club_id" class="h-11 px-4 saas-input text-sm min-w-[185px]">
+                <option value="">All Clubs</option>
+                {% for club in clubs %}
+                    <option value="{{ club.id }}" {% if club_filter == club.id %}selected{% endif %}>{{ club.name }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="flex items-center gap-2.5">
+                <button type="submit" class="h-11 px-6 rounded-xl btn-pastel-primary text-sm flex-grow sm:flex-grow-0">
+                    Apply Filters
+                </button>
+                <a href="{{ url_for('main.events') }}" class="h-11 px-5 rounded-xl btn-pastel-reset text-sm inline-flex items-center justify-center">
+                    Reset
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Events Grid -->
+    {% if events %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+        {% for event in events %}
+            {% include "partials/_event_card.html" %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-panel p-14 text-center rounded-2xl">
+        <div class="w-14 h-14 rounded-2xl bg-[#EFEBF9] text-[#5B47A3] mx-auto flex items-center justify-center mb-4">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </div>
+        <p class="text-[#303247] font-bold text-lg mb-1.5">No matching events found</p>
+        <p class="text-[#85899B] text-sm mb-5">Try broadening your search query or clearing your active filters.</p>
+        <a href="{{ url_for('main.events') }}" class="inline-flex px-5 py-2.5 rounded-xl btn-pastel-primary text-xs">View All Events</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

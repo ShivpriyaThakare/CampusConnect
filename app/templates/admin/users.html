@@ -1,0 +1,336 @@
+{% extends "layouts/admin_layout.html" %}
+
+{% block title %}Member & Role Management - Admin - CampusConnect{% endblock %}
+
+{% block admin_content %}
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div>
+        <h1 class="text-3xl font-extrabold text-[#303247] tracking-tight">Member &amp; Role Management</h1>
+        <p class="text-[#85899B] text-sm mt-1">Add members, manage club memberships, update roles, and activate or deactivate accounts.</p>
+    </div>
+    <button onclick="openModal('addMemberModal')" class="px-5 py-2.5 rounded-xl btn-pastel-primary text-xs inline-flex items-center gap-2 whitespace-nowrap">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+        Add Member
+    </button>
+</div>
+
+<!-- Search & Filter Bar -->
+<form method="GET" action="{{ url_for('admin.users') }}" class="glass-panel p-4 rounded-2xl mb-6 flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+    <input type="text" name="search" value="{{ search_query }}" placeholder="Search by name or email..."
+        class="h-10 px-4 saas-input text-xs flex-grow">
+
+    <select name="role" class="h-10 px-3 saas-input text-xs min-w-[140px]">
+        <option value="">All Roles</option>
+        <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admin</option>
+        <option value="coordinator" {% if role_filter == 'coordinator' %}selected{% endif %}>Coordinator</option>
+        <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Student</option>
+    </select>
+
+    <select name="club_id" class="h-10 px-3 saas-input text-xs min-w-[165px]">
+        <option value="">All Clubs</option>
+        {% for c in clubs %}
+            <option value="{{ c.id }}" {% if club_filter == c.id %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="h-10 px-5 rounded-xl btn-pastel-primary text-xs">Filter</button>
+    <a href="{{ url_for('admin.users') }}" class="h-10 px-4 rounded-xl btn-pastel-reset text-xs inline-flex items-center justify-center">Reset</a>
+</form>
+
+<!-- Users & Memberships Table -->
+<div class="glass-panel rounded-3xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-[#FAF9FE] text-xs font-semibold text-[#85899B] uppercase tracking-wider border-b border-[#EAE8F4]">
+                    <th class="p-4">Member</th>
+                    <th class="p-4">Assigned Club(s)</th>
+                    <th class="p-4">Role</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-[#F0EEF8] text-sm">
+                {% if users %}
+                    {% for u in users %}
+                    <tr class="hover:bg-[#FAF9FE]">
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-[#EFEBF9] border border-[#DFD7F4] flex items-center justify-center text-xs font-bold text-[#5B47A3] flex-shrink-0">
+                                    {{ u.name[0] }}
+                                </div>
+                                <div>
+                                    <span class="font-bold text-[#303247] block">{{ u.name }}</span>
+                                    <span class="text-xs text-[#85899B]">{{ u.email }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <div class="flex flex-wrap gap-1.5 items-center">
+                                {% if u.club_memberships %}
+                                    {% for m in u.club_memberships %}
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold badge-blue">
+                                            {{ m.club.name }} ({{ m.member_role }})
+                                            <form method="POST" action="{{ url_for('admin.users') }}" class="inline">
+                                                <input type="hidden" name="action" value="remove_from_club">
+                                                <input type="hidden" name="membership_id" value="{{ m.id }}">
+                                                <button type="submit" title="Remove from club" class="ml-0.5 text-[#9E334D] hover:font-bold">&times;</button>
+                                            </form>
+                                        </span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="text-xs text-[#85899B] italic">No club membership</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <form method="POST" action="{{ url_for('admin.users') }}" class="inline-block">
+                                <input type="hidden" name="action" value="change_role">
+                                <input type="hidden" name="user_id" value="{{ u.id }}">
+                                <select name="role" onchange="this.form.submit()" class="h-9 px-3 saas-input text-xs font-semibold">
+                                    <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+                                    <option value="coordinator" {% if u.role == 'coordinator' %}selected{% endif %}>Coordinator</option>
+                                    <option value="student" {% if u.role == 'student' %}selected{% endif %}>Student</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td class="p-4">
+                            {% if u.is_active %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-emerald">Active</span>
+                            {% else %}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-rose">Deactivated</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-4 text-right space-x-1.5 whitespace-nowrap">
+                            <button onclick="openModal('editMemberModal_{{ u.id }}')" class="px-2.5 py-1.5 rounded-lg btn-pastel-secondary text-xs">Edit</button>
+                            {% if u.id != current_user.id %}
+                            <form method="POST" action="{{ url_for('admin.users') }}" class="inline-block">
+                                <input type="hidden" name="action" value="toggle_status">
+                                <input type="hidden" name="user_id" value="{{ u.id }}">
+                                <button type="submit" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold {% if u.is_active %}badge-amber hover:bg-[#FFD6C2]{% else %}badge-emerald hover:bg-[#B9E4D0]{% endif %}">
+                                    {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.users') }}" class="inline-block" onsubmit="return confirm('Permanently remove user {{ u.name }}?');">
+                                <input type="hidden" name="action" value="delete_member">
+                                <input type="hidden" name="user_id" value="{{ u.id }}">
+                                <button type="submit" class="px-2.5 py-1.5 rounded-lg badge-rose hover:bg-[#FBCFD9] text-xs font-semibold">Remove</button>
+                            </form>
+                            {% else %}
+                            <span class="text-xs text-[#85899B] italic">Current User</span>
+                            {% endif %}
+
+                            <!-- Edit Member Modal -->
+                            <div id="editMemberModal_{{ u.id }}" class="fixed inset-0 bg-[#303247]/35 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+                                <div class="glass-panel p-7 rounded-3xl max-w-md w-full text-left">
+                                    <div class="flex items-center justify-between mb-5">
+                                        <h3 class="text-lg font-bold text-[#303247]">Edit Member: {{ u.name }}</h3>
+                                        <button type="button" onclick="closeModal('editMemberModal_{{ u.id }}')" class="text-[#85899B] hover:text-[#303247] text-xl">&times;</button>
+                                    </div>
+                                    <form method="POST" action="{{ url_for('admin.users') }}" class="space-y-4">
+                                        <input type="hidden" name="action" value="edit_member">
+                                        <input type="hidden" name="user_id" value="{{ u.id }}">
+
+                                        <div>
+                                            <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Full Name</label>
+                                            <input type="text" name="name" value="{{ u.name }}" required class="w-full h-11 px-4 saas-input text-sm">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Email</label>
+                                            <input type="email" name="email" value="{{ u.email }}" required class="w-full h-11 px-4 saas-input text-sm">
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Role</label>
+                                                <select name="role" class="w-full h-11 px-3 saas-input text-sm">
+                                                    <option value="student" {% if u.role == 'student' %}selected{% endif %}>Student</option>
+                                                    <option value="coordinator" {% if u.role == 'coordinator' %}selected{% endif %}>Coordinator</option>
+                                                    <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Account Status</label>
+                                                <select name="is_active" class="w-full h-11 px-3 saas-input text-sm">
+                                                    <option value="true" {% if u.is_active %}selected{% endif %}>Active</option>
+                                                    <option value="false" {% if not u.is_active %}selected{% endif %}>Deactivated</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Assign Club (Optional)</label>
+                                                <select name="club_id" class="w-full h-11 px-3 saas-input text-sm">
+                                                    <option value="">-- No Change --</option>
+                                                    {% for c in clubs %}
+                                                        <option value="{{ c.id }}">{{ c.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Club Role</label>
+                                                <select name="member_role" class="w-full h-11 px-3 saas-input text-sm">
+                                                    {% for mr in member_roles %}
+                                                        <option value="{{ mr }}">{{ mr }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="pt-3 flex justify-end gap-3">
+                                            <button type="button" onclick="closeModal('editMemberModal_{{ u.id }}')" class="px-4 py-2 rounded-xl btn-pastel-reset text-xs">Cancel</button>
+                                            <button type="submit" class="px-5 py-2 rounded-xl btn-pastel-primary text-xs">Save Changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-[#85899B] text-sm">No matching members found.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Member Modal (Supports Creating New User OR Assigning Existing User to a Club) -->
+<div id="addMemberModal" class="fixed inset-0 bg-[#303247]/35 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="glass-panel p-8 rounded-3xl max-w-lg w-full text-left max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-xl font-bold text-[#303247]">Add / Assign Member</h3>
+            <button type="button" onclick="closeModal('addMemberModal')" class="text-[#85899B] hover:text-[#303247] text-xl">&times;</button>
+        </div>
+
+        <!-- Tab Switcher -->
+        <div class="flex gap-2 mb-5 p-1 bg-[#F3F1FC] rounded-xl">
+            <button type="button" id="tabNewBtn" onclick="toggleMemberMode('new')" class="flex-1 py-2 rounded-lg bg-white text-[#303247] text-xs font-bold shadow-xs">Create New User</button>
+            <button type="button" id="tabExistingBtn" onclick="toggleMemberMode('existing')" class="flex-1 py-2 rounded-lg text-[#5E6278] text-xs font-semibold">Assign Existing User</button>
+        </div>
+
+        <!-- New User Form -->
+        <form id="formNewMember" method="POST" action="{{ url_for('admin.users') }}" class="space-y-4">
+            <input type="hidden" name="action" value="add_member">
+            <input type="hidden" name="mode" value="new">
+
+            <div>
+                <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Full Name *</label>
+                <input type="text" name="name" required placeholder="e.g., Jordan Lee" class="w-full h-11 px-4 saas-input text-sm">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Email Address *</label>
+                <input type="email" name="email" required placeholder="jordan@campusconnect.edu" class="w-full h-11 px-4 saas-input text-sm">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">System Role</label>
+                    <select name="role" class="w-full h-11 px-3 saas-input text-sm">
+                        <option value="student" selected>Student</option>
+                        <option value="coordinator">Coordinator</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Password (Optional)</label>
+                    <input type="password" name="password" placeholder="Min 6 chars or blank" class="w-full h-11 px-4 saas-input text-sm">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Assign to Club</label>
+                    <select name="club_id" class="w-full h-11 px-3 saas-input text-sm">
+                        <option value="">-- Optional --</option>
+                        {% for c in clubs %}
+                            <option value="{{ c.id }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Club Role</label>
+                    <select name="member_role" class="w-full h-11 px-3 saas-input text-sm">
+                        {% for mr in member_roles %}
+                            <option value="{{ mr }}">{{ mr }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-3 flex justify-end gap-3">
+                <button type="button" onclick="closeModal('addMemberModal')" class="px-4 py-2.5 rounded-xl btn-pastel-reset text-xs">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl btn-pastel-primary text-xs">Add Member</button>
+            </div>
+        </form>
+
+        <!-- Assign Existing User Form -->
+        <form id="formExistingMember" method="POST" action="{{ url_for('admin.users') }}" class="space-y-4 hidden">
+            <input type="hidden" name="action" value="add_member">
+            <input type="hidden" name="mode" value="existing">
+
+            <div>
+                <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Select Registered User *</label>
+                <select name="existing_user_id" required class="w-full h-11 px-3 saas-input text-sm">
+                    <option value="">-- Choose User --</option>
+                    {% for u in users %}
+                        <option value="{{ u.id }}">{{ u.name }} ({{ u.email }} - {{ u.role }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Target Club *</label>
+                    <select name="club_id" required class="w-full h-11 px-3 saas-input text-sm">
+                        <option value="">-- Choose Club --</option>
+                        {% for c in clubs %}
+                            <option value="{{ c.id }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1">Club Role</label>
+                    <select name="member_role" class="w-full h-11 px-3 saas-input text-sm">
+                        {% for mr in member_roles %}
+                            <option value="{{ mr }}">{{ mr }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-3 flex justify-end gap-3">
+                <button type="button" onclick="closeModal('addMemberModal')" class="px-4 py-2.5 rounded-xl btn-pastel-reset text-xs">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl btn-pastel-primary text-xs">Assign to Club</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleMemberMode(mode) {
+    const newForm = document.getElementById('formNewMember');
+    const existingForm = document.getElementById('formExistingMember');
+    const newBtn = document.getElementById('tabNewBtn');
+    const existingBtn = document.getElementById('tabExistingBtn');
+    if (mode === 'existing') {
+        newForm.classList.add('hidden');
+        existingForm.classList.remove('hidden');
+        existingBtn.className = 'flex-1 py-2 rounded-lg bg-white text-[#303247] text-xs font-bold shadow-xs';
+        newBtn.className = 'flex-1 py-2 rounded-lg text-[#5E6278] text-xs font-semibold';
+    } else {
+        existingForm.classList.add('hidden');
+        newForm.classList.remove('hidden');
+        newBtn.className = 'flex-1 py-2 rounded-lg bg-white text-[#303247] text-xs font-bold shadow-xs';
+        existingBtn.className = 'flex-1 py-2 rounded-lg text-[#5E6278] text-xs font-semibold';
+    }
+}
+</script>
+{% endblock %}

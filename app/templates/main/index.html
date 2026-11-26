@@ -1,0 +1,122 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CampusConnect - College Event, Club & Expense Management Portal{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pt-16 pb-20 overflow-hidden border-b border-[#EAE8F4] bg-gradient-to-b from-[#F8F7FF] via-[#FAF9F6] to-[#F8F7FF]">
+    <div class="hero-glow"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center max-w-3xl mx-auto">
+            <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold badge-indigo mb-6 shadow-xs">
+                <span class="w-2 h-2 rounded-full bg-[#7A63C9]"></span>
+                Modern Campus Event &amp; Club Platform
+            </span>
+            <h1 class="text-4xl sm:text-5xl lg:text-[54px] font-extrabold tracking-tight text-[#303247] mb-5 leading-[1.15]">
+                Discover Events, Join Clubs &amp; <span class="text-[#6B54BA]">Empower Campus Life</span>
+            </h1>
+            <p class="text-[#85899B] text-base sm:text-lg leading-relaxed mb-9 max-w-2xl mx-auto">
+                CampusConnect simplifies college event organization, student registrations, automated PDF certificate issuance, and transparent cross-club expense auditing.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                <a href="{{ url_for('main.events') }}" class="w-full sm:w-auto px-7 py-3.5 rounded-xl btn-pastel-primary text-sm flex items-center justify-center gap-2">
+                    Explore Events
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+                <a href="{{ url_for('main.clubs') }}" class="w-full sm:w-auto px-7 py-3.5 rounded-xl btn-pastel-secondary text-sm flex items-center justify-center gap-2">
+                    View Student Clubs
+                </a>
+            </div>
+        </div>
+
+        <!-- Metrics Stats Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-14 max-w-4xl mx-auto">
+            <div class="glass-card p-6 rounded-2xl text-center">
+                <div class="w-10 h-10 rounded-xl bg-[#EFEBF9] text-[#5B47A3] mx-auto flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <span class="block text-3xl font-extrabold text-[#303247] mb-1">{{ stats.total_events }}</span>
+                <span class="text-xs text-[#85899B] font-semibold uppercase tracking-wider">Active Events</span>
+            </div>
+            <div class="glass-card p-6 rounded-2xl text-center">
+                <div class="w-10 h-10 rounded-xl bg-[#E8F7F0] text-[#1E6A4C] mx-auto flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <span class="block text-3xl font-extrabold text-[#303247] mb-1">{{ stats.total_clubs }}</span>
+                <span class="text-xs text-[#85899B] font-semibold uppercase tracking-wider">Student Clubs</span>
+            </div>
+            <div class="glass-card p-6 rounded-2xl text-center">
+                <div class="w-10 h-10 rounded-xl bg-[#EAF4FC] text-[#2B5E88] mx-auto flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"></path></svg>
+                </div>
+                <span class="block text-3xl font-extrabold text-[#303247] mb-1">{{ stats.total_students }}</span>
+                <span class="text-xs text-[#85899B] font-semibold uppercase tracking-wider">Students Enrolled</span>
+            </div>
+            <div class="glass-card p-6 rounded-2xl text-center">
+                <div class="w-10 h-10 rounded-xl bg-[#FFF1EA] text-[#9A4E27] mx-auto flex items-center justify-center mb-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <span class="block text-3xl font-extrabold text-[#303247] mb-1">{{ stats.gallery_count }}</span>
+                <span class="text-xs text-[#85899B] font-semibold uppercase tracking-wider">Gallery Memories</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Events Section -->
+<section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        <div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-[#303247] tracking-tight">Upcoming Events</h2>
+            <p class="text-[#85899B] text-sm mt-1.5">Don't miss out on campus hackathons, cultural nights, and hands-on workshops.</p>
+        </div>
+        <a href="{{ url_for('main.events') }}" class="text-sm font-semibold text-[#5B47A3] hover:text-[#433380] inline-flex items-center gap-1.5 transition-colors">
+            View All Events
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+    </div>
+
+    {% if featured_events %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+        {% for event in featured_events %}
+            {% include "partials/_event_card.html" %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-panel p-12 text-center rounded-2xl">
+        <p class="text-[#85899B] text-base">No upcoming events published yet. Check back soon!</p>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Active Student Clubs Showcase -->
+<section class="py-16 bg-[#FAF9F6] border-t border-b border-[#EAE8F4]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-[#303247] tracking-tight">Vibrant Student Clubs</h2>
+            <p class="text-[#85899B] text-sm mt-2">Explore active campus clubs driving innovation, art, sports, and student leadership.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for club in clubs %}
+            <div class="glass-card p-6 rounded-2xl flex flex-col items-center text-center justify-between">
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-2xl bg-[#EFEBF9] border border-[#DFD7F4] flex items-center justify-center text-[#5B47A3] mb-4 overflow-hidden">
+                        {% if club.logo_url %}
+                            <img src="{{ url_for('static', filename=club.logo_url) }}" alt="{{ club.name }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <span class="text-xl font-extrabold">{{ club.name[0] }}</span>
+                        {% endif %}
+                    </div>
+                    <h3 class="text-base font-bold text-[#303247] mb-1.5">{{ club.name }}</h3>
+                    <p class="text-xs text-[#85899B] leading-relaxed line-clamp-2 mb-5">{{ club.description or 'Active campus student organization.' }}</p>
+                </div>
+                <a href="{{ url_for('main.club_detail', club_id=club.id) }}" class="px-4 py-2 rounded-xl badge-indigo text-xs font-semibold hover:bg-[#DFD7F4] transition-colors">
+                    Explore Club
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

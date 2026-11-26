@@ -1,0 +1,14 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Server Error (500) - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
+    <div class="w-20 h-20 rounded-3xl bg-[#FFF1EA] border border-[#FFD6C2] flex items-center justify-center text-[#9A4E27] mb-6">
+        <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+    </div>
+    <h1 class="text-4xl font-extrabold text-[#303247] mb-2">Internal Server Error</h1>
+    <p class="text-[#85899B] max-w-md mb-8">Something went wrong on our server. Our team has been notified.</p>
+    <a href="{{ url_for('main.index') }}" class="px-6 py-2.5 rounded-xl btn-pastel-primary text-sm">Return Home</a>
+</div>
+{% endblock %}

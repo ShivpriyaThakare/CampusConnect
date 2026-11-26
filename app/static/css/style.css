@@ -1,0 +1,237 @@
+/* CampusConnect Pastel SaaS Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --font-primary: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-canvas: #F8F7FF;
+  --bg-warm: #FAF9F6;
+  --surface-card: #FFFFFF;
+  --pastel-lavender: #B8A8E8;
+  --pastel-lavender-hover: #A593DF;
+  --pastel-lavender-soft: #EFEBF9;
+  --pastel-blue: #B9D8F2;
+  --pastel-blue-soft: #EAF4FC;
+  --pastel-mint: #B9E4D0;
+  --pastel-mint-soft: #EAF8F1;
+  --pastel-peach: #FFD6C2;
+  --pastel-peach-soft: #FFF1EA;
+  --pastel-rose: #FBCFD9;
+  --pastel-rose-soft: #FFF0F3;
+  --text-primary: #303247;
+  --text-secondary: #85899B;
+  --border-soft: #EAE8F4;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Clean SaaS Surfaces (replaces legacy dark glass classes while preserving class hooks) */
+.glass-panel {
+  background: #FFFFFF;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 4px 24px -4px rgba(48, 50, 71, 0.05), 0 1px 3px rgba(48, 50, 71, 0.03);
+}
+
+.nav-surface {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-soft);
+  box-shadow: 0 2px 16px -4px rgba(48, 50, 71, 0.04);
+}
+
+.glass-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 4px 20px -6px rgba(48, 50, 71, 0.06);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.25s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(184, 168, 232, 0.55);
+  box-shadow: 0 16px 32px -10px rgba(132, 115, 194, 0.16), 0 4px 12px -4px rgba(48, 50, 71, 0.05);
+}
+
+/* Subtle Hero Pastel Aura */
+.hero-glow {
+  position: absolute;
+  top: -140px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 820px;
+  height: 460px;
+  background: radial-gradient(circle at 30% 40%, rgba(184, 168, 232, 0.28) 0%, transparent 55%),
+              radial-gradient(circle at 72% 45%, rgba(185, 216, 242, 0.28) 0%, transparent 55%),
+              radial-gradient(circle at 50% 75%, rgba(255, 214, 194, 0.22) 0%, transparent 60%);
+  filter: blur(48px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Pastel Buttons */
+.btn-pastel-primary {
+  background-color: #B8A8E8;
+  color: #27293D;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 10px -2px rgba(137, 117, 204, 0.28);
+}
+
+.btn-pastel-primary:hover {
+  background-color: #A593DF;
+  color: #1F2133;
+  box-shadow: 0 6px 16px -4px rgba(137, 117, 204, 0.35);
+}
+
+.btn-pastel-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-pastel-secondary {
+  background-color: #FFFFFF;
+  color: #303247;
+  border: 1px solid #E2DFF0;
+  font-weight: 600;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-pastel-secondary:hover {
+  background-color: #F3F1FC;
+  border-color: #CFC8EA;
+}
+
+.btn-pastel-reset {
+  background-color: #F1F1F6;
+  color: #5E6278;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-pastel-reset:hover {
+  background-color: #E5E5EE;
+  color: #303247;
+}
+
+/* Pastel Status & Category Badges */
+.badge-indigo {
+  background-color: #EFEBF9;
+  color: #4F3E8E;
+  border: 1px solid #DFD7F4;
+}
+
+.badge-blue {
+  background-color: #E9F3FC;
+  color: #2B5E88;
+  border: 1px solid #CFE4F7;
+}
+
+.badge-emerald {
+  background-color: #E8F7F0;
+  color: #1E6A4C;
+  border: 1px solid #CBEAD9;
+}
+
+.badge-amber {
+  background-color: #FFF0E8;
+  color: #9A4E27;
+  border: 1px solid #FFDCC9;
+}
+
+.badge-rose {
+  background-color: #FEEEF2;
+  color: #9E334D;
+  border: 1px solid #FAD4DD;
+}
+
+.badge-neutral {
+  background-color: #F3F3F8;
+  color: #5E6278;
+  border: 1px solid #E4E4EE;
+}
+
+/* Consistent SaaS Form Inputs */
+.saas-input {
+  background-color: #FAF9FE;
+  border: 1px solid #E3E0F0;
+  color: #303247;
+  border-radius: 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.saas-input::placeholder {
+  color: #9BA0B2;
+}
+
+.saas-input:focus {
+  outline: none;
+  background-color: #FFFFFF;
+  border-color: #B8A8E8;
+  box-shadow: 0 0 0 3px rgba(184, 168, 232, 0.25);
+}
+
+/* Star Rating Selector */
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.star-rating input {
+  display: none;
+}
+
+.star-rating label {
+  font-size: 2rem;
+  color: #DDDCE8;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.star-rating label:hover {
+  transform: scale(1.08);
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+  color: #F5B461;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F4F2FC;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4CEEA;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B8A8E8;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

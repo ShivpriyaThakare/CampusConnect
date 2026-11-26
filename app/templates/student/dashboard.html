@@ -1,0 +1,160 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Student Dashboard - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold badge-indigo">Student Portal</span>
+                <span class="text-xs text-[#85899B]">Personal Dashboard</span>
+            </div>
+            <h1 class="text-3xl font-extrabold text-[#303247] tracking-tight">Welcome, {{ current_user.name }}!</h1>
+        </div>
+        <div>
+            <a href="{{ url_for('student.certificates') }}" class="px-5 py-2.5 rounded-xl btn-pastel-primary text-xs inline-flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                My PDF Certificates ({{ certificates|length }})
+            </a>
+        </div>
+    </div>
+
+    <div class="space-y-12">
+
+        <!-- My Club Memberships -->
+        {% if memberships %}
+        <div>
+            <h2 class="text-xl font-bold text-[#303247] mb-4">My Club Memberships</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {% for m in memberships %}
+                <div class="glass-card p-5 rounded-2xl flex items-center justify-between gap-3">
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold badge-blue inline-block mb-1">{{ m.member_role }}</span>
+                        <h3 class="text-sm font-bold text-[#303247]">{{ m.club.name }}</h3>
+                        <p class="text-xs text-[#85899B]">{{ m.club.category }}</p>
+                    </div>
+                    <a href="{{ url_for('main.club_detail', club_id=m.club.id) }}" class="px-3 py-1.5 rounded-xl btn-pastel-secondary text-xs">View Club</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Upcoming Registered Events -->
+        <div>
+            <h2 class="text-xl font-bold text-[#303247] mb-5 flex items-center gap-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#68C49B]"></span>
+                Upcoming Registered Events
+            </h2>
+
+            {% if upcoming_events %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for ev in upcoming_events %}
+                <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-indigo">{{ ev.category }}</span>
+                            <span class="text-xs font-medium text-[#85899B] truncate">{{ ev.club.name }}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#303247] mb-2">{{ ev.title }}</h3>
+                        <p class="text-xs text-[#85899B] leading-relaxed line-clamp-2 mb-4">{{ ev.description or 'No description provided.' }}</p>
+                    </div>
+
+                    <div class="pt-4 border-t border-[#F0EEF8] space-y-2 text-xs text-[#5E6278]">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-[#7D68C8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>{{ ev.event_date|datetimeformat('%b %d, %Y • %I:%M %p') }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-[#34A877]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                            <span>{{ ev.venue }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-[#F0EEF8] flex items-center justify-between">
+                        <form method="POST" action="{{ url_for('student.unregister_event', event_id=ev.id) }}">
+                            <button type="submit" onclick="return confirm('Cancel registration?')" class="text-xs text-[#9E334D] font-semibold hover:underline">Unregister</button>
+                        </form>
+                        <a href="{{ url_for('main.event_detail', event_id=ev.id) }}" class="px-4 py-2 rounded-xl btn-pastel-primary text-xs">View Details</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="glass-panel p-10 text-center rounded-2xl">
+                <p class="text-[#85899B] text-sm mb-4">You have not registered for any upcoming events yet.</p>
+                <a href="{{ url_for('main.events') }}" class="inline-flex px-5 py-2.5 rounded-xl btn-pastel-primary text-xs">Browse Events Directory</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Past Registered Events & Feedback -->
+        <div>
+            <h2 class="text-xl font-bold text-[#303247] mb-5">Past Attended &amp; Completed Events</h2>
+
+            {% if past_events %}
+            <div class="glass-panel rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-[#FAF9FE] text-xs font-semibold text-[#85899B] uppercase tracking-wider border-b border-[#EAE8F4]">
+                                <th class="p-4">Event</th>
+                                <th class="p-4">Host Club</th>
+                                <th class="p-4">Event Date</th>
+                                <th class="p-4">Attendance</th>
+                                <th class="p-4">PDF Certificate</th>
+                                <th class="p-4 text-right">Feedback</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#F0EEF8] text-sm">
+                            {% for ev in past_events %}
+                            {% set reg = registrations|selectattr('event_id', 'equalto', ev.id)|first %}
+                            {% set cert = certificates|selectattr('event_id', 'equalto', ev.id)|first %}
+                            <tr class="hover:bg-[#FAF9FE] transition-colors">
+                                <td class="p-4 font-bold text-[#303247]">{{ ev.title }}</td>
+                                <td class="p-4 text-[#5E6278] text-xs">{{ ev.club.name }}</td>
+                                <td class="p-4 text-[#85899B] text-xs">{{ ev.event_date|datetimeformat('%b %d, %Y') }}</td>
+                                <td class="p-4">
+                                    {% if reg and reg.attended %}
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-emerald">Attended</span>
+                                    {% else %}
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold badge-rose">Absent</span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-4">
+                                    {% if cert %}
+                                        <a href="{{ url_for('student.download_certificate', certificate_id=cert.id) }}"
+                                            class="px-3 py-1.5 rounded-xl btn-pastel-primary text-xs inline-flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                            Download PDF
+                                        </a>
+                                    {% else %}
+                                        <span class="text-xs text-[#85899B] italic">Not issued</span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-4 text-right">
+                                    {% if reg and reg.attended %}
+                                        <a href="{{ url_for('student.submit_feedback', event_id=ev.id) }}" class="px-3 py-1.5 rounded-xl badge-amber text-xs font-semibold hover:bg-[#FFD6C2] transition-colors">
+                                            Give Feedback
+                                        </a>
+                                    {% else %}
+                                        <span class="text-xs text-[#85899B] italic">N/A</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="glass-panel p-8 text-center rounded-2xl">
+                <p class="text-[#85899B] text-sm">No past event history recorded yet.</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

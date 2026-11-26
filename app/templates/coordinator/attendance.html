@@ -1,0 +1,64 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Mark Attendance - {{ event.title }} - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-[#303247] tracking-tight">Student Attendance Roster</h1>
+            <p class="text-[#85899B] text-sm mt-1">Event: <strong class="text-[#5B47A3]">{{ event.title }}</strong></p>
+        </div>
+        <a href="{{ url_for('coordinator.event_details', event_id=event.id) }}" class="px-4 py-2 rounded-xl btn-pastel-secondary text-xs">Back to Control Center</a>
+    </div>
+
+    <div class="glass-panel rounded-3xl overflow-hidden">
+        {% if registrations %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#FAF9FE] text-xs font-semibold text-[#85899B] uppercase tracking-wider border-b border-[#EAE8F4]">
+                        <th class="p-4">#</th>
+                        <th class="p-4">Student Name</th>
+                        <th class="p-4">Email</th>
+                        <th class="p-4">Registered On</th>
+                        <th class="p-4 text-right">Attendance Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#F0EEF8] text-sm">
+                    {% for reg in registrations %}
+                    <tr class="hover:bg-[#FAF9FE]">
+                        <td class="p-4 font-bold text-[#85899B]">{{ loop.index }}</td>
+                        <td class="p-4 font-bold text-[#303247] flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-[#EFEBF9] flex items-center justify-center text-xs text-[#4E3D8C] font-bold">
+                                {{ reg.user.name[0] }}
+                            </div>
+                            <span>{{ reg.user.name }}</span>
+                        </td>
+                        <td class="p-4 text-[#5E6278] text-xs">{{ reg.user.email }}</td>
+                        <td class="p-4 text-xs text-[#85899B]">{{ reg.registered_at|datetimeformat('%b %d, %Y') }}</td>
+                        <td class="p-4 text-right">
+                            <button
+                                class="attendance-toggle px-3.5 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer transition-all
+                                {% if reg.attended %}badge-emerald{% else %}badge-amber{% endif %}"
+                                data-reg-id="{{ reg.id }}"
+                                data-event-id="{{ event.id }}"
+                                data-attended="{% if reg.attended %}true{% else %}false{% endif %}">
+                                {% if reg.attended %}
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Attended
+                                {% else %}
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Absent
+                                {% endif %}
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-[#85899B] text-sm text-center py-10">No registered students to record attendance for.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

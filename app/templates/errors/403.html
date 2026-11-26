@@ -1,0 +1,14 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Access Denied (403) - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
+    <div class="w-20 h-20 rounded-3xl bg-[#FEEEF2] border border-[#FBCFD9] flex items-center justify-center text-[#9E334D] mb-6">
+        <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+    </div>
+    <h1 class="text-4xl font-extrabold text-[#303247] mb-2">Access Restricted</h1>
+    <p class="text-[#85899B] max-w-md mb-8">You do not have the required permissions to view this page or resource.</p>
+    <a href="{{ url_for('main.index') }}" class="px-6 py-2.5 rounded-xl btn-pastel-primary text-sm">Return Home</a>
+</div>
+{% endblock %}

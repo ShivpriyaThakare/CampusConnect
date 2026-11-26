@@ -1,0 +1,14 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}No Assigned Club - Coordinator - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
+    <div class="w-20 h-20 rounded-3xl bg-[#FFF1EA] border border-[#FFD6C2] flex items-center justify-center text-[#9A4E27] mb-6">
+        <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    </div>
+    <h1 class="text-3xl font-extrabold text-[#303247] mb-2">No Assigned Club</h1>
+    <p class="text-[#85899B] max-w-md mb-8">Your account has coordinator permissions, but you have not yet been assigned to a specific campus club by the Administrator.</p>
+    <a href="{{ url_for('main.index') }}" class="px-6 py-2.5 rounded-xl btn-pastel-primary text-sm">Return to Portal Home</a>
+</div>
+{% endblock %}

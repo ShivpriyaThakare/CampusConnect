@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Register - CampusConnect{% endblock %}
+
+{% block content %}
+<div class="min-h-[85vh] flex items-center justify-center px-4 relative py-12 overflow-hidden">
+    <div class="hero-glow"></div>
+
+    <div class="w-full max-w-lg glass-panel p-8 rounded-3xl relative z-10">
+        <div class="text-center mb-8">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#B8A8E8] to-[#B9E4D0] mx-auto flex items-center justify-center text-[#303247] mb-4 shadow-sm border border-[#E6E2F6]">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+            </div>
+            <h2 class="text-2xl font-extrabold text-[#303247] tracking-tight">Create Account</h2>
+            <p class="text-[#85899B] text-sm mt-1">Join the campus community on CampusConnect</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-4">
+            <div>
+                <label for="name" class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1.5">Full Name</label>
+                <input type="text" id="name" name="name" required placeholder="Alex Johnson"
+                    class="w-full h-11 px-4 saas-input text-sm">
+            </div>
+
+            <div>
+                <label for="email" class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1.5">Campus Email</label>
+                <input type="email" id="email" name="email" required placeholder="alex.j@college.edu"
+                    class="w-full h-11 px-4 saas-input text-sm">
+            </div>
+
+            <div>
+                <label for="role" class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1.5">Account Role</label>
+                <select id="role" name="role" class="w-full h-11 px-4 saas-input text-sm">
+                    <option value="student" selected>Student Participant</option>
+                    <option value="coordinator">Club Coordinator</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="password" class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1.5">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••"
+                        class="w-full h-11 px-4 saas-input text-sm">
+                </div>
+
+                <div>
+                    <label for="confirm_password" class="block text-xs font-semibold text-[#5E6278] uppercase tracking-wider mb-1.5">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••"
+                        class="w-full h-11 px-4 saas-input text-sm">
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full h-11 px-4 mt-2 rounded-xl btn-pastel-primary text-sm flex items-center justify-center gap-2">
+                <span>Complete Registration</span>
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-[#EAE8F4] text-center text-xs text-[#85899B]">
+            Already have an account?
+            <a href="{{ url_for('auth.login') }}" class="text-[#5B47A3] font-semibold hover:underline ml-1">Log in here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
